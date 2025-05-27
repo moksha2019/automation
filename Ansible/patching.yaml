@@ -1,0 +1,35 @@
+#This  script is for automating patching the servers
+#  This  lay  will hold the  packages  that  impact  the  services as well.
+---
+- name: Play for holding the packages and patching the servers
+  hosts: all
+  become: true
+  vars:
+   - packages:
+      - jenkins
+      - docker*
+  tasks:
+   - name: holding the  packages
+     dpkg_selectios:
+      name: jenkins and docker
+      pkg: "{{ packages }}"
+      state: hold
+
+   - name: Updating the repository
+     apt:
+      upgrade: yes
+      update_cache: yes
+
+   - name: rebooting the machine
+     reboot:
+      msg: "rebooting the server {{ ansible_hostname }}"
+      reboot_timeout: 5
+      connect_timeout: 300
+
+   - name:  validating the  new  kernel
+     shell: uname -r
+     register: kernel-validate
+     
+   - name: printing the  new  kernel
+     debug:
+      msg: "{{ kernel-validate.stdout }}"
