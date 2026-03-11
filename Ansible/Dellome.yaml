@@ -1,0 +1,31 @@
+#This script id for pushing the  idrac  patches  on the  Dell server using  Dellome appliance.
+#Below  are the  stages we will follow  end to end  automation.
+#STAGE 1: Updating the appliance repository from  DELL centralized Server.
+#STAGE 2: Creating the Baseline(with server need to patch).
+#STAGE 3: Puashing the patches to  the Idrac  server  without rebooting the nodes.
+
+# We are using a collection module which is not present in the ansible-core module. so we need to  install the  below package  to use this module.
+# ansible-galaxy collection install dellemc.openmanage
+---
+#STAGE 1: 
+- name:  Updating the catalog Manager in Dell OME
+  hosts: all
+  connection: local
+  vars:
+    hostname: "<OME_IPaddress>"
+    username: "<username>"
+    password: "<password>"
+  tasks:
+    - name: Updating the catalog
+      dellemc.openmanage.ome_catalog:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        catalog_name: "dell"
+        state: "present"
+        refresh: yes
+        register: ome_update_result
+    - name: Displaying the  output of the  result
+      debug:
+        var: ome_update_result.msg
