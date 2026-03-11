@@ -56,11 +56,30 @@
         catalog_name: "{{ firmaware_catalog_name }}"
         device_service_tags: "{{ server_service_tags }}"
         job_wait: true
-        job_wait_timeout: 2400
+        job_wait_timeout: 300
         register: baseline_creation_job
 
     - name: Dispalying the results of the baseline_creation_job
       debug:
         vars: baseline_creation_job.output 
+
+#STAGE 3:
+---
+- name: Pushing the patches to the physical servers using DELL OME
+  hosts: all
+  connection: local
+  vars:
+    hostname: "<OME OME_IPaddress>"
+    username: "<username>"
+    password: "<password>"
+    baseline: "Application_servers"
+  dellemc.openmanage.ome_firmware:
+    hostname: "{{ hostname }}"
+    username: "{{ username }}"
+    password: "{{ password }}"
+    validate_certs: no 
+    baseline_name: "{{ baseline }}"
+    schedule: StageForNextReboot
+    timeout: 2400
 
 
