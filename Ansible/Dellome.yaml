@@ -29,3 +29,38 @@
     - name: Displaying the  output of the  result
       debug:
         var: ome_update_result.msg
+
+---
+#STAGE 2:
+- name: Creating the Baseline in DELL OME
+  hosts: all
+  connection: local
+  gather_facts: false
+  vars:
+    hostname: "<OME_IPaddress>"
+    username: "<username>"
+    password: "<password>"
+    server_service_tags: [ "tag-1", "tag-2", "tag-3"]
+    firmaware_catalog_name: "dell"
+    new_baseline_name: "Application_servers"
+  tasks:
+    - name: creating the baseline using list of server_service_tags
+      dellemc.openmanage.ome_firmware_baseline:
+        hostname: "{{ hostname }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        command: "create"
+        baseline_name: "{{ new_baseline_name }}"
+        baseline_description: "This baseline is for pushing patches application servers"
+        catalog_name: "{{ firmaware_catalog_name }}"
+        device_service_tags: "{{ server_service_tags }}"
+        job_wait: true
+        job_wait_timeout: 2400
+        register: baseline_creation_job
+
+    - name: Dispalying the results of the baseline_creation_job
+      debug:
+        vars: baseline_creation_job.output 
+
+
