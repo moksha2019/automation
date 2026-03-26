@@ -17,12 +17,13 @@
     password: "<password>"
   tasks:
     - name: Updating the catalog
-      dellemc.openmanage.ome_catalog:
+      dellemc.openmanage.ome_firmware_catalog:
         hostname: "{{ hostname }}"
         username: "{{ username }}"
         password: "{{ password }}"
         validate_certs: no
-        catalog_name: "dell"
+        catalog_name: "Dell"
+        repository_type: "DELL_ONLINE"
         state: "present"
         refresh: yes
         register: ome_update_result
