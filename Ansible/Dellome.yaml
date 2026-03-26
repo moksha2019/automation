@@ -8,13 +8,14 @@
 # ansible-galaxy collection install dellemc.openmanage
 ---
 #STAGE 1: 
+---
 - name:  Updating the catalog Manager in Dell OME
   hosts: all
   connection: local
   vars:
-    hostname: "<OME_IPaddress>"
-    username: "<username>"
-    password: "<password>"
+    hostname: " OME IP ADRESS"
+    username: "admin"
+    password: " ome password"
   tasks:
     - name: Updating the catalog
       dellemc.openmanage.ome_firmware_catalog:
@@ -23,10 +24,12 @@
         password: "{{ password }}"
         validate_certs: no
         catalog_name: "Dell"
+        #catalog_source: "online"
         repository_type: "DELL_ONLINE"
+        source_path: "downloads.dell.com/catalog/catalog.gz"
         state: "present"
-        refresh: yes
-        register: ome_update_result
+          # refresh: yes
+      register: ome_update_result
     - name: Displaying the  output of the  result
       debug:
         var: ome_update_result.msg
